@@ -1,0 +1,67 @@
+
+# coding: utf-8
+
+# In[690]:
+
+
+import pandas as pd
+import re
+pattern = '/.*/'
+prog = re.compile( pattern )
+
+def table(data):
+    datatable = {}
+    for i in data:
+        if i in datatable:
+            datatable[i] += 1
+        else:
+            datatable[i] = 1
+    return datatable
+
+
+Ds = open('URLs.txt', 'r')
+a = []
+for raw in Ds:
+    if prog.match(raw) :
+        line_name = raw.split('/')[1]
+        tab = table(line_name)
+        summ_po_temam = sum(tab.values())
+        a += (line_name, int(summ_po_temam))
+print(a)
+
+
+# In[691]:
+
+
+quantity = [ x for x in a if type(x) == int]
+quality = [ y for y in a  if type(y) == str ]
+
+
+# In[692]:
+
+
+categoriesDict = dict( zip(quality, quantity) )
+print( categoriesDict )
+
+
+# In[693]:
+
+
+datadict = {
+    'Название': quality,
+    'Количество': quantity
+}
+hello = pd.DataFrame.from_dict(datadict)
+
+
+# In[694]:
+
+
+yo = hello.groupby( 'Название' ).mean()
+
+
+# In[695]:
+
+
+yo.sort_values(by = 'Количество', ascending = False ).reset_index()
+
